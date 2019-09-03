@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1567490174761.000,
+    "dirty" : true,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "586E9F59",
+    "lastKnownWriteTime" : 1567490187,
+    "last_content_update" : 1567490199829,
+    "path" : "C:/Users/goelr/Work/injury_imputation/R/travel_surveys.R",
+    "project_path" : "R/travel_surveys.R",
+    "properties" : {
+        "cursorPosition" : "56,0",
+        "scrollLine" : "26",
+        "tempName" : "Untitled1"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
