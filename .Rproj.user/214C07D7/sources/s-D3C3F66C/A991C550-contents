@@ -1,0 +1,50 @@
+#Load packages.
+library(survey)
+library(tidyverse)
+
+#Read dataset.
+df <- read.csv("./Mobilidade_2012_v0.csv")
+
+#Filter out people aged < 18 years.
+df <- filter(df, IDADE >= 18)
+
+#Recode trip main mode.
+df$mode[df$MODOPRIN <= 5] <- "Bus"
+df$mode[df$MODOPRIN == 6 | df$MODOPRIN == 7] <- "Private car"
+df$mode[df$MODOPRIN == 8] <- "Taxi"
+df$mode[df$MODOPRIN >= 9 & df$MODOPRIN <= 11] <- "Van/Minibus"
+df$mode[df$MODOPRIN == 12] <- "Subway"
+df$mode[df$MODOPRIN == 13] <- "Train"
+df$mode[df$MODOPRIN == 14] <- "Motorbike"
+df$mode[df$MODOPRIN == 15] <- "Bike"
+df$mode[df$MODOPRIN == 16] <- "Walking"
+df$mode[df$MODOPRIN == 17] <- "Others"
+
+#Set complex sample design to estimate person-level parameters.
+df_person <- filter(df, F_PESS == 1) #keep only the participants' first registry/row.
+df_person_design <- svydesign(id = ~ID_DOM, strata = ~ZONA,
+                            weights = ~FE_PESS, data = df_person)
+
+#Set complex sample design to estimate trip-level parameters.
+df_trip <- filter(df, !is.na(FE_VIA)) #keep only rows with trips.
+df_trip_design <- svydesign(id = ~ID_DOM, strata = ~ZONA,
+                            weights = ~FE_VIA, data = df_trip)
+
+#Survey statistics (examples).
+##Tilde (~) required before variables' names.
+prop.table(svytable(formula = ~SEXO, design = df_person_design)) #person level.
+svymean(x = ~IDADE, design = df_person_design) #person level.
+##Statistics for multiple variables can be requested using plus signs (+).
+svymean(x = ~IDADE + ~TOT_VIAG, design = df_person_design) #person level.
+
+prop.table(svytable(formula = ~mode, design = df_trip_design)) #trip level.
+svymean(x = ~DISTANCIA, design = df_trip_design) #trip level.
+svymean(x = ~DISTANCIA + ~DURACAO, design = df_trip_design) #trip level.
+
+#Survey statistics on subsets (examples).
+svyby(formula = ~TOT_VIAG, by = ~SEXO,
+      design = df_person_design, FUN = svymean) #person level.
+svyby(formula = ~DISTANCIA + ~DURACAO, by = ~SEXO,
+      design = df_trip_design, FUN = svymean) #trip level.
+
+##END OF CODE##

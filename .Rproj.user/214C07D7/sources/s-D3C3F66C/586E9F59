@@ -7,13 +7,13 @@
     "folds" : "",
     "hash" : "0",
     "id" : "586E9F59",
-    "lastKnownWriteTime" : 1567490187,
-    "last_content_update" : 1567490199829,
+    "lastKnownWriteTime" : 1567504198,
+    "last_content_update" : 1567504670883,
     "path" : "C:/Users/goelr/Work/injury_imputation/R/travel_surveys.R",
     "project_path" : "R/travel_surveys.R",
     "properties" : {
-        "cursorPosition" : "56,0",
-        "scrollLine" : "26",
+        "cursorPosition" : "54,0",
+        "scrollLine" : "42",
         "tempName" : "Untitled1"
     },
     "read_only" : false,
