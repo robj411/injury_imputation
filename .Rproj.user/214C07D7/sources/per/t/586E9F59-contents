@@ -1,5 +1,5 @@
 
-#####Colombia--Bogota (Use this one)####
+#####Colombia--Bogota (Use this one)#### (N persons = 91765)
 ##In the previous version, stages were used, but there is no benefit as the stages for public transport hardly reports walking
 ###added duration in the raw excel file (Viaje) as the column 'duration'-- calculated from the clock time of start and end
 setwd('V:/Studies/MOVED/HealthImpact/Data/TIGTHAT/Colombia/Bogota/Travel')
@@ -47,7 +47,7 @@ head(trips)
 
 write.csv(trips, 'C:/Users/goelr/Work/injury_imputation/raw_data/trips/bogota_trips.csv')
 
-###Brazil-- Sao Paulo####
+###Brazil-- Sao Paulo#### (N persons = 24534)
 setwd('V:/Studies/MOVED/HealthImpact/Data/TIGTHAT/Brazil/Sao Paulo/Pesquisa Origem Destino 2012')
 trips<-read.csv('Mobilidade_2012_v0.csv')
 str(trips)
@@ -102,7 +102,7 @@ trips<-subset(trips, select=c("ID_DOM", "ID_PESS", "female", "IDADE",  "N_VIAG",
 colnames(trips)<-c("hh_ID", "ind_ID","female","age" ,"trip_ID", "trip_distance","trip_time", "trip_main_mode", "weight_trip", "trip_purpose")
 
 
-####Brazil-- Belo Horizonte######
+####Brazil-- Belo Horizonte###### (N persons = 100656)
 setwd('V:/Studies/MOVED/HealthImpact/Data/TIGTHAT/Brazil/Belo Horizonte/Travel survey')
 trips<-read.table('dbo_TB_VIAGENS_INTERNAS_RMBH.txt', header = TRUE, sep=",")
 persons<- read.table('dbo_TB_DOMICILIO_PESSOA_ENTREGA.txt', header = TRUE, sep=",")
