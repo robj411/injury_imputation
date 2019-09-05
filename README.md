@@ -4,7 +4,7 @@ At the top level, we put our code and three directories: one for raw data, one f
 
 Raw data are travel surveys and injury records.
 
-We need a script to take raw_data/trips and make processed distance data: processed_data/distances.
+We need a script to take raw_data/trips and make processed distance data: processed_data/distances. files in processed_data/distances/ should contain a table with two columns: one should be mode name and the other the total distances travelled for the whole population. The modes need to match the modes in injuries and in the other cities. The distances should be in km.
 
 Similarly, we need a script to take raw_data/injuries and make processed whw matrices: processed_data/whw_matrices.
 
