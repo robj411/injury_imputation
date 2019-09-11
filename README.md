@@ -8,6 +8,8 @@ We need a script to take raw_data/trips and make processed distance data: proces
 
 To get distance for the whole city, we need population numbers. We can take these from links of the form
 https://github.com/ITHIM/ITHIM-R/blob/master/inst/extdata/local/belo_horizonte/population_belo_horizonte.csv
+https://github.com/ITHIM/ITHIM-R/blob/master/inst/extdata/local/bogota/population_bogota.csv
+https://github.com/ITHIM/ITHIM-R/blob/master/inst/extdata/local/sao_paulo/population_sao_paulo.csv
 
 Similarly, we need a script to take raw_data/injuries and make processed whw matrices: processed_data/whw_matrices.
 
