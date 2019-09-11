@@ -6,6 +6,11 @@ Raw data are travel surveys and injury records.
 
 We need a script to take raw_data/trips and make processed distance data: processed_data/distances. files in processed_data/distances/ should contain a table with two columns: one should be mode name and the other the total distances travelled for the whole population. The modes need to match the modes in injuries and in the other cities. The distances should be in km.
 
+To get distance for the whole city, we need population numbers. We can take these from links of the form
+https://github.com/ITHIM/ITHIM-R/blob/master/inst/extdata/local/belo_horizonte/population_belo_horizonte.csv
+https://github.com/ITHIM/ITHIM-R/blob/master/inst/extdata/local/bogota/population_bogota.csv
+https://github.com/ITHIM/ITHIM-R/blob/master/inst/extdata/local/sao_paulo/population_sao_paulo.csv
+
 Similarly, we need a script to take raw_data/injuries and make processed whw matrices: processed_data/whw_matrices.
 
 Once we have all these, we will write a function to generate predictions using processed_data to save in outputs.
