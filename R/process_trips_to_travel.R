@@ -32,7 +32,7 @@ print(unique(trips$stage_mode)[!unique(trips$stage_mode)%in%modes])
 # sum modes
 summary_table <- data.frame(mode=modes,km=0)
 ##!! this needs to be by demographic group
-for(i in 1:length(modes)) summary_table$km[i] <- sum(trips$stage_distance[trips$stage_mode==summary_table$mode[i]])
+for(i in 1:length(modes)) summary_table$km[i] <- sum(trips$stage_distance[trips$stage_mode==summary_table$mode[i]]) ##!! multiply by trip weight
 
 # multiply by populations
 ##!! this needs to be by demographic group
