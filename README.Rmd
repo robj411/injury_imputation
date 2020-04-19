@@ -1,0 +1,169 @@
+---
+title: "Injury imputation"
+output: rmarkdown::github_document
+---
+  
+
+```{r setup, include=FALSE}
+library(knitr)
+library(summarytools)
+knitr::opts_chunk$set(comment=NA, prompt=FALSE, cache=FALSE, echo=F, message = F, warning = F, results='asis')
+
+st_options(bootstrap.css     = FALSE,       # Already part of the theme so no need for it
+           plain.ascii       = FALSE,       # One of the essential settings
+           style             = "rmarkdown", # Idem.
+           dfSummary.silent  = TRUE,        # Suppresses messages about temporary files
+           footnote          = NA,          # Keeping the results minimalistic
+           subtitle.emphasis = FALSE)       # For the vignette theme, this gives
+
+load('outputs/workspace.Rdata')
+#load('outputs/variables.Rdata')
+#city_distances <- readRDS('processed_data/distances/city_distance.Rds')
+#city_injuries <- readRDS('processed_data/whw_matrices/city_injuries.Rds')
+```
+
+```{r identify cities with and without whw matrices,echo=F}
+
+## separate into those cities with whw and those without
+cities_with_whw <- sapply(cities,function(x)'whw'%in%names(city_injuries[[x]]))
+```
+
+
+Cities `r paste0(cities[cities_with_whw],collapse=', ')` have who-hit-whom (WHW) matrices.
+
+Cities `r paste0(cities[!cities_with_whw],collapse=', ')` don't.
+
+Can we use the WHW matrices of the cities that have them and predict them for those that don't, using distances by mode for all cities?
+
+The data are distances and fatal road-traffic collisions taken from http://github.com/ithim/ithim-r.
+
+
+## Basic regression
+We start with cities with WHW matrices, and we keep only injuries that have distances for both parties involved in the crash. 
+
+```{r read table,echo=F}
+injury_table <- readRDS('outputs/whw_table.Rds')
+```
+
+We fit a model with three categorical covariates: the mode of the casualty, the mode of the colliding vehicle, and the city. We assume a Poisson distribution for the fatality counts and use the distances travelled and the years of data collection as the offset.
+
+The figure shows how much each level of the three covariates is expected to contribute to risk:
+
+```{r plot,echo=F}
+mod <- glm(count ~ mode1+mode2+city,data=injury_table,family=poisson(link=log),offset=0.5*log(dist1)+0.5*log(dist2)+log(years))
+coefficients <- coef(mod)
+nm <- names(coefficients)
+
+
+identifiers <- c('mode1','mode2','city')
+nms <- list()
+vals <- list()
+for(i in 1:length(identifiers)){
+  mode1s <- grepl(identifiers[i],nm)
+  m1_nms <- gsub(identifiers[i],'',nm[mode1s])
+  nms[[i]] <- c(m1_nms,setdiff(unique(injury_table[[identifiers[i]]]),m1_nms))
+  vals[[i]] <- c(coefficients[mode1s],0)
+}
+
+cols <- c('hotpink','grey','darkorange2')
+par(mar=c(5,5,2,2))
+plot(0,0,col='white',xlim=c(2,10.5),ylim=range(c(coefficients[-1])),frame=F,xaxt='n',xlab='',ylab='Danger',cex.axis=1.5,cex.lab=1.5)
+for(i in 1:length(identifiers)){
+  xval <- rep(3*i,length(nms[[i]]))
+  yval <- vals[[i]]
+  for(j in 2:length(yval))
+    for(k in 1:(j-1)){
+      if(abs(diff(yval[c(k,j)]))<0.1){
+        xval[j] <- xval[j] + 0.5
+        xval[k] <- xval[k] - 0.5
+      }
+    }
+  text(labels=nms[[i]][yval!=0],x=xval[yval!=0],y=yval[yval!=0],col='navyblue')
+  text(labels=nms[[i]][yval==0],x=xval[yval==0],y=yval[yval==0],col=cols[i])
+}
+axis(side=1,at=c(3,6,9),labels=c('Casualties','Colliders','Cities'),cex.axis=1.5)
+```
+
+The coloured levels in the middle are the reference values for each category. As we might expect: pedestrians are most at risk, and pose the least risk; trucks suffer the least risk and cars pose the most risk. NOV, which stands for no other vehicle, seems to cause most fatalities - perhaps this represents missing information, rather than true collisions with no other vehicle.
+
+*******************
+
+## Information synthesis
+
+To include the cities without matrices in the regression model, and to impute their matrices, we use the information we have: the number of fatalities per mode, each of which is a sum over collider modes. This constitutes a separate arm of the inference, which again uses a Poisson distribution to describe the sums.
+
+```{r compile pred table,echo=F}
+coefficients <- coef(glm1)
+nm <- names(coefficients)
+coefficients <- results_list[,1] # coef(glm1)
+names(coefficients) <- nm
+
+identifiers <- c('mode1','mode2','city')
+nms <- list()
+vals <- list()
+for(i in 1:length(identifiers)){
+  mode1s <- grepl(identifiers[i],nm)
+  m1_nms <- gsub(identifiers[i],'',nm[mode1s])
+  nms[[i]] <- c(m1_nms,setdiff(unique(injury_table[[identifiers[i]]]),m1_nms))
+  vals[[i]] <- c(coefficients[mode1s],0)
+}
+
+cols <- c('hotpink','grey','darkorange2')
+par(mar=c(5,5,2,2))
+plot(0,0,col='white',xlim=c(2,10.5),ylim=range(c(coefficients[-1])),frame=F,xaxt='n',xlab='',ylab='Danger',cex.axis=1.5,cex.lab=1.5)
+for(i in 1:length(identifiers)){
+  xval <- rep(3*i,length(nms[[i]]))
+  yval <- vals[[i]]
+  for(j in 2:length(yval))
+    for(k in 1:(j-1)){
+      if(abs(diff(yval[c(k,j)]))<0.2){
+        xval[j] <- xval[j] + 0.5
+        xval[k] <- xval[k] - 0.5
+      }
+    }
+  text(labels=nms[[i]][yval!=0],x=xval[yval!=0],y=yval[yval!=0],col='navyblue')
+  text(labels=nms[[i]][yval==0],x=xval[yval==0],y=yval[yval==0],col=cols[i])
+}
+axis(side=1,at=c(3,6,9),labels=c('Casualties','Colliders','Cities'),cex.axis=1.5)
+```
+
+We see a similar pattern as before in terms of the modes. The two new cities share the middle of space of all the cities with Belo Horizonte, Bangalore and Bogota.
+
+***************************
+
+## Imputed matrices
+
+From the output of the regression, we can estimate the expected fatalities for each combination of modes:
+
+### Buenos Aires
+```{r predict ba,echo=F}
+kable(round(ba_pred))
+```
+
+
+### Mexico City
+
+```{r predict mc,echo=F}
+kable(round(mc_pred))
+```
+
+*******************
+
+### Who-hit-whom matrices
+
+These can be compared to the raw matrices from the other cities:
+
+```{r print whw,echo=F}
+for(city in cities[cities_with_whw]) {
+  cat(city)
+  rounded <- round(city_injuries[[city]]$whw/city_weights[[city]])
+  print(kable(rounded,caption=city))
+    cat("\n")
+}
+```
+
+********************
+
+Still to do:
+
+Include interactions between covariates (particularly pedestrian-pedestrian collisions); include distributions to describe distances; ascribe noise differentially to modes; 
