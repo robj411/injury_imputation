@@ -20,18 +20,18 @@ The figure shows how much each level of the three covariates is expected to cont
 
 ![](README_files/figure-markdown_github/plot-1.png)
 
-The coloured levels in the middle are the reference values for each category. As we might expect: pedestrians are most at risk, and pose the least risk; trucks suffer the least risk and cars pose the most risk. NOV, which stands for no other vehicle, seems to cause most fatalities - perhaps this represents missing information, rather than true collisions with no other vehicle.
+The coloured levels in the middle are the reference values for each category. As we might expect: pedestrians are most at risk, and pose the least risk; trucks suffer the least risk. NOV, which stands for no other vehicle, seems to cause most fatalities - perhaps this represents missing information, rather than true collisions with no other vehicle.
 
 ------------------------------------------------------------------------
 
-Information synthesis
----------------------
+Evidence synthesis
+------------------
 
-To include the cities without matrices in the regression model, and to impute their matrices, we use the information we have: the number of fatalities per mode, each of which is a sum over collider modes. This constitutes a separate arm of the inference, which again uses a Poisson distribution to describe the sums.
+To include the cities without matrices in the regression model, and to impute their matrices, we use the information we have: the number of fatalities per mode, each of which (in reality) is a sum over collider modes. This constitutes a separate arm of the inference, which again uses a Poisson distribution to describe the sums. The new cities' counts will drive the coefficients for the city intercepts; the regression coefficients for the collider modes from the old cities will drive the disaggregation of the sum into component collider parts; and all cities, new and old, will inform the coefficients for the casualty modes.
 
 ![](README_files/figure-markdown_github/compile%20pred%20table-1.png)
 
-We see a similar pattern as before in terms of the modes. The two new cities share the middle of space of all the cities with Belo Horizonte, Bangalore and Bogota.
+We see a similar pattern as before in terms of the modes (indeed the collider coefficients are (and should be) exactly the same). The two new cities share the middle of space of all the cities with Belo Horizonte, Bangalore and Bogota.
 
 ------------------------------------------------------------------------
 
