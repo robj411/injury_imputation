@@ -28,18 +28,35 @@ load('outputs/workspace.Rdata')
 cities_with_whw <- sapply(cities,function(x)'whw'%in%names(city_injuries[[x]]))
 ```
 
+Can we use road-traffic fatality data from many cities to predict the distribution of road-traffic fatalities for a new city, using only travel-distance data?
 
-Cities `r paste0(cities[cities_with_whw],collapse=', ')` have who-hit-whom (WHW) matrices.
+***********************
 
-Cities `r paste0(cities[!cities_with_whw],collapse=', ')` don't.
+For the cities `r paste0(cities[cities_with_whw],collapse=', ')`, we have who-hit-whom (WHW) matrices: that is, we have a cross tabulation of fatal road-traffic collisions by casualty mode and the mode with which they collided. For example, here is the WHW matrix of Bogota, where the column headers are the casualty modes and the row labels are the collider modes:
 
-Can we use the WHW matrices of the cities that have them and predict them for those that don't, using distances by mode for all cities?
+```{r print bogota,echo=F}
+city <- 'bogota'
+  rounded <- round(city_injuries[[city]]$whw/city_weights[[city]])
+  print(kable(rounded,caption=city))
+    cat("\n")
+```
 
-The data are distances and fatal road-traffic collisions taken from http://github.com/ithim/ithim-r.
+For cities `r paste0(cities[!cities_with_whw],collapse=', ')`, we don't have these matrices. We only have total counts for the casualty modes. For example, here are the numbers for Mexico City:
+
+```{r print mc,echo=F}
+city <- 'mexico_city'
+  rounded <- city_injuries[[city]]$nov/city_weights[[city]]
+  print(kable(t(rounded),caption=city))
+    cat("\n")
+```
+
+We will use the WHW matrices of the cities for which we have them to predict (or impute) the matrices for the cities for which we don't, using distances by mode for all cities.
+
+The data are distances and fatal road-traffic collisions taken from http://github.com/ithim/ithim-r. Distances are from travel (or time use) surveys, and fatalities from police data.
 
 
 ## Basic regression
-We start with cities with WHW matrices, and we keep only injuries that have distances for both parties involved in the crash. 
+Let's start by looking at just the cities with WHW matrices, to see what the regression might look like. 
 
 ```{r read table,echo=F}
 injury_table <- readRDS('outputs/whw_table.Rds')
@@ -166,4 +183,4 @@ for(city in cities[cities_with_whw]) {
 
 Still to do:
 
-Include interactions between covariates (particularly pedestrian-pedestrian collisions); include distributions to describe distances; ascribe noise differentially to modes; 
+Include interactions between covariates (particularly pedestrian-pedestrian collisions); include distributions to describe distances (then we can include also injury counts for which we don't have a distance estimate); ascribe noise differentially to modes; ascribe occupancies for vehicles, e.g. we have assumed a bus occupancy of 10 for all cities

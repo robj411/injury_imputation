@@ -1,18 +1,36 @@
 Injury imputation
 ================
 
-Cities accra, sao\_paulo, delhi, bangalore, santiago, belo\_horizonte, bogota, vizag have who-hit-whom (WHW) matrices.
+Can we use road-traffic fatality data from many cities to predict the distribution of road-traffic fatalities for a new city, using only travel-distance data?
 
-Cities buenos\_aires, mexico\_city don't.
+------------------------------------------------------------------------
 
-Can we use the WHW matrices of the cities that have them and predict them for those that don't, using distances by mode for all cities?
+For the cities accra, sao\_paulo, delhi, bangalore, santiago, belo\_horizonte, bogota, vizag, we have who-hit-whom (WHW) matrices: that is, we have a cross tabulation of fatal road-traffic collisions by casualty mode and the mode with which they collided. For example, here is the WHW matrix of Bogota, where the column headers are the casualty modes and the row labels are the collider modes:
 
-The data are distances and fatal road-traffic collisions taken from <http://github.com/ithim/ithim-r>.
+|             |  pedestrian|  bicycle|  motorcycle|  car|  truck|  bus|
+|-------------|-----------:|--------:|-----------:|----:|------:|----:|
+| bicycle     |           2|        1|           2|    0|      0|    0|
+| motorcycle  |          73|        2|          32|    0|      0|    0|
+| car         |          96|       14|          42|   15|      0|    0|
+| bus         |          55|       15|          29|    2|      0|    7|
+| unspecified |           7|        0|           0|    0|      0|    0|
+| truck       |          12|        5|          17|    1|      1|    0|
+| pedestrian  |           0|        1|           3|    0|      0|    1|
+
+For cities buenos\_aires, mexico\_city, we don't have these matrices. We only have total counts for the casualty modes. For example, here are the numbers for Mexico City:
+
+|  bicycle|  car|  motorcycle|  bus|  pedestrian|
+|--------:|----:|-----------:|----:|-----------:|
+|       41|  366|         130|   14|         638|
+
+We will use the WHW matrices of the cities for which we have them to predict (or impute) the matrices for the cities for which we don't, using distances by mode for all cities.
+
+The data are distances and fatal road-traffic collisions taken from <http://github.com/ithim/ithim-r>. Distances are from travel (or time use) surveys, and fatalities from police data.
 
 Basic regression
 ----------------
 
-We start with cities with WHW matrices, and we keep only injuries that have distances for both parties involved in the crash.
+Let's start by looking at just the cities with WHW matrices, to see what the regression might look like.
 
 We fit a model with three categorical covariates: the mode of the casualty, the mode of the colliding vehicle, and the city. We assume a Poisson distribution for the fatality counts and use the distances travelled and the years of data collection as the offset.
 
@@ -175,4 +193,4 @@ vizag
 
 Still to do:
 
-Include interactions between covariates (particularly pedestrian-pedestrian collisions); include distributions to describe distances; ascribe noise differentially to modes;
+Include interactions between covariates (particularly pedestrian-pedestrian collisions); include distributions to describe distances (then we can include also injury counts for which we don't have a distance estimate); ascribe noise differentially to modes; ascribe occupancies for vehicles, e.g. we have assumed a bus occupancy of 10 for all cities
