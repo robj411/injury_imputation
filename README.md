@@ -56,7 +56,7 @@ We see a similar pattern as before in terms of the modes (indeed the collider co
 Imputed matrices
 ----------------
 
-From the output of the regression, we can estimate the expected fatalities for each combination of modes:
+From the output of the regression, we can estimate the expected fatalities for each combination of modes, and compare the marginals to the raw data:
 
 ### Buenos Aires
 
@@ -69,6 +69,11 @@ From the output of the regression, we can estimate the expected fatalities for e
 | bus        |   20|          88|          32|    1|        5|
 | nov        |   27|         119|          43|    2|        7|
 
+|         |  car|  pedestrian|  motorcycle|  bus|  bicycle|
+|---------|----:|-----------:|-----------:|----:|--------:|
+| raw     |  366|         638|         130|   14|       41|
+| imputed |  163|         711|         259|   10|       42|
+
 ### Mexico City
 
 |            |  car|  pedestrian|  motorcycle|  bus|  bicycle|
@@ -79,6 +84,11 @@ From the output of the regression, we can estimate the expected fatalities for e
 | pedestrian |    1|           2|           1|    0|        0|
 | bus        |   37|          64|          49|    2|        9|
 | nov        |   31|          53|          41|    2|        8|
+
+|         |  car|  pedestrian|  motorcycle|  bus|  bicycle|
+|---------|----:|-----------:|-----------:|----:|--------:|
+| raw     |  366|         638|         130|   14|       41|
+| imputed |  273|         471|         360|   15|       68|
 
 ------------------------------------------------------------------------
 

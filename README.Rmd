@@ -150,18 +150,30 @@ We see a similar pattern as before in terms of the modes (indeed the collider co
 
 ## Imputed matrices
 
-From the output of the regression, we can estimate the expected fatalities for each combination of modes:
+From the output of the regression, we can estimate the expected fatalities for each combination of modes, and compare the marginals to the raw data:
 
 ### Buenos Aires
 ```{r predict ba,echo=F}
 kable(round(ba_pred))
 ```
+```{r compare ba,echo=F}
+city <- 'buenos_aires'
+rounded <- city_injuries[[city]]$nov/city_weights[[city]]
+print(kable(rbind(raw=rounded[match(colnames(ba_pred),names(rounded))],imputed=colSums(round(ba_pred)))))
+```
+
+
 
 
 ### Mexico City
 
 ```{r predict mc,echo=F}
 kable(round(mc_pred))
+```
+```{r compare mc,echo=F}
+city <- 'mexico_city'
+rounded <- city_injuries[[city]]$nov/city_weights[[city]]
+print(kable(rbind(raw=rounded[match(colnames(mc_pred),names(rounded))],imputed=colSums(round(mc_pred)))))
 ```
 
 *******************
